@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Rubik } from "next/font/google";
+import 'antd/dist/reset.css';
+import '@ant-design/v5-patch-for-react-19';
+import { AntdRegistry } from '@ant-design/nextjs-registry';
 
 const rubik = Rubik({
   subsets: ["latin"],
@@ -20,7 +23,7 @@ export default function RootLayout({
   return (
     <html lang="es">
       <body className={rubik.className}>
-        {children}
+        <AntdRegistry>{children}</AntdRegistry>
       </body>
     </html>
   );
