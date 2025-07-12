@@ -1,4 +1,4 @@
-// constants/adminMenuItems.ts
+
 import {
   DashboardOutlined,
   ContainerOutlined,

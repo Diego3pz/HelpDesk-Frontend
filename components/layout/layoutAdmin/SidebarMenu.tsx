@@ -3,7 +3,6 @@
 
 import { Menu, Avatar, Layout } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
-import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 const { Sider } = Layout;
