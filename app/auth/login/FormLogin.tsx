@@ -2,7 +2,7 @@
 
 import React from "react";
 import { useForm, Controller } from "react-hook-form";
-import { Input, Button, Form, Typography } from "antd";
+import { Input, Button, Form, Typography, Radio } from "antd";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
@@ -11,6 +11,7 @@ const { Title, Text } = Typography;
 type LoginData = {
     email: string;
     password: string;
+    role: "cliente" | "empleado" | "admin";
 };
 
 export default function FormLogin() {
@@ -87,6 +88,26 @@ export default function FormLogin() {
                         />
                     </Form.Item>
 
+                    <Form.Item
+                        label="Rol"
+                        validateStatus={errors.role ? "error" : ""}
+                        help={errors.role?.message}
+                    >
+                        <Controller
+                            name="role"
+                            control={control}
+                            defaultValue="cliente"
+                            rules={{ required: "Selecciona un rol" }}
+                            render={({ field }) => (
+                                <Radio.Group {...field}>
+                                    <Radio value="cliente">Cliente</Radio>
+                                    <Radio value="empleado">Empleado</Radio>
+                                    <Radio value="admin">Admin</Radio>
+                                </Radio.Group>
+                            )}
+                        />
+                    </Form.Item>
+
                     <Form.Item>
                         <Button
                             type="primary"
@@ -101,7 +122,7 @@ export default function FormLogin() {
                     <Form.Item style={{ textAlign: "center", marginBottom: 0 }}>
                         <Text>
                             ¿No tienes cuenta?{" "}
-                            <Link href="/register" style={{ color: "#1677ff" }}>
+                            <Link href="/auth/register" style={{ color: "#1677ff" }}>
                                 Regístrate
                             </Link>
                         </Text>

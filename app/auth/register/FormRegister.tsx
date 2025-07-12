@@ -27,6 +27,8 @@ export default function FormRegister() {
     const password = watch("password", "");
 
     return (
-        <></>
+        <>
+            <h1>Registro</h1>
+        </>
     );
 }
