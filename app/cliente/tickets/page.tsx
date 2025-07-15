@@ -1,7 +1,7 @@
+'use client';
 
+import TicketTableWrapper from '@/components/layout/layoutCliente/tickets/TicketTableWrapper';
 
 export default function TicketsPage() {
-  return (
-    <div>TicketsPage</div>
-  )
+  return <TicketTableWrapper />;
 }
