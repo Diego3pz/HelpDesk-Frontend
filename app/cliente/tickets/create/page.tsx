@@ -3,6 +3,8 @@ import React, { useState } from "react";
 import { Form, Input, Button, Typography, Select, Upload, Radio, message } from "antd";
 import { useForm, Controller } from "react-hook-form";
 import { Row, Col } from "antd";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { createTicket } from "@/lib/api/ticket";
 
 const { Title } = Typography;
 
@@ -12,23 +14,45 @@ type TicketFormData = {
   prioridad: "alta" | "media" | "baja";
   adjuntos?: FileList;
   categoria: string;
-  tecnico_id?: number;
   comentarios: string;
 };
 
 export default function NuevoTicketPage() {
   const { control, handleSubmit, reset } = useForm<TicketFormData>();
-  const [loading, setLoading] = useState(false);
   const [fileList, setFileList] = useState<any[]>([]);
+  const queryClient = useQueryClient()
 
-  const onSubmit = async (data: TicketFormData) => {
-    setLoading(true);
-    // Simular una llamada a la API
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-    setLoading(false);
-    message.success("Ticket creado con éxito");
-    reset();
-    setFileList([]); // Reinicia los archivos seleccionados
+  // Mutación para crear ticket
+  const { mutate, isPending } = useMutation({
+    mutationFn: async (data: TicketFormData) => {
+      const formData = new FormData();
+      formData.append('title', data.titulo);
+      formData.append('description', data.descripcion);
+      formData.append('priority', data.prioridad);
+      formData.append('category', data.categoria);
+
+      // Adjuntar archivos reales
+      fileList.forEach((fileObj) => {
+        formData.append('attachments[]', fileObj.originFileObj);
+      });
+
+      return createTicket(formData);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['tickets'] });
+      message.success("Ticket creado con éxito");
+      reset();
+      setFileList([]);
+    },
+    onError: () => {
+      message.error("Error al crear el ticket");
+    },
+  });
+
+  const onSubmit = (data: TicketFormData) => {
+    mutate(data);
+    console.log(data);
+
   };
 
   return (
@@ -120,25 +144,6 @@ export default function NuevoTicketPage() {
                 )}
               />
             </Form.Item>
-            <Form.Item label="Asignar a técnico">
-              <Controller
-                name="tecnico_id"
-                control={control}
-                rules={{ required: "El técnico es obligatorio" }}
-                render={({ field, fieldState }) => (
-                  <Select
-                    {...field}
-                    style={{ borderRadius: "8px" }}
-                    placeholder="Seleccione un técnico"
-                    status={fieldState.error ? "error" : ""}
-                    options={[
-                      { label: "Juan García", value: 1 },
-                      { label: "Ana Torres", value: 2 },
-                    ]}
-                  />
-                )}
-              />
-            </Form.Item>
           </Col>
         </Row>
         <Row>
@@ -165,7 +170,7 @@ export default function NuevoTicketPage() {
                   />
                 )}
               />
-              <Button loading={loading} style={{ position: "relative", marginTop: "16px", borderRadius: "8px", padding: "24px" }} type="primary" htmlType="submit">
+              <Button loading={isPending} style={{ position: "relative", marginTop: "16px", borderRadius: "8px", padding: "24px" }} type="primary" htmlType="submit">
                 Crear Ticket
               </Button>
             </Form.Item>
