@@ -4,6 +4,8 @@ import { Rubik } from "next/font/google";
 import 'antd/dist/reset.css';
 import '@ant-design/v5-patch-for-react-19';
 import { AntdRegistry } from '@ant-design/nextjs-registry';
+import QueryProvider from "@/components/layout/QueryProvider";
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
 const rubik = Rubik({
   subsets: ["latin"],
@@ -23,7 +25,10 @@ export default function RootLayout({
   return (
     <html lang="es">
       <body className={rubik.className}>
-        <AntdRegistry>{children}</AntdRegistry>
+        <QueryProvider>
+          <ReactQueryDevtools initialIsOpen={false} />
+          <AntdRegistry>{children}</AntdRegistry>
+        </QueryProvider>
       </body>
     </html>
   );
